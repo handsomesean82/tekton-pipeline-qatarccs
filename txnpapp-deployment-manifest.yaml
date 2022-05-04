@@ -1,0 +1,38 @@
+        cat <<EOF | kubectl apply -f -
+        apiVersion: v1
+        kind: Service
+        metadata:
+          name: txnpapp
+          labels:
+            app: txnpapp
+        spec:
+          ports:
+            - port: 8080
+              name: http
+          selector:
+            app: txnpapp
+        ---
+        apiVersion: apps/v1
+        kind: Deployment
+        metadata:
+          name: txnpapp
+          labels:
+            app: txnpapp
+        spec:
+          replicas: 1
+          selector:
+            matchLabels:
+              app: txnpapp
+          template:
+            metadata:
+              labels:
+                app: txnpapp
+            spec:
+              containers:
+                - name: txnpapp
+                  image: 192.168.0.243:30372/qatarccs/txnpapp:v2
+                  imagePullPolicy: IfNotPresent
+                  ports:
+                    - containerPort: 8080
+                      name: http
+        EOF
